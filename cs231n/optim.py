@@ -145,11 +145,16 @@ def adam(x, dx, config=None):
   epsilon = config['epsilon']
   m = config['m']
   v = config['v']
-  config['m'] = beta1*m + (1-beta1)*dx
-  config['v'] = beta2*v + (1-beta2)*(dx**2)
-  config['t'] += 1
-  x -= (learning_rate * m / (np.sqrt(v) + epsilon)).reshape(np.shape(x))
-  next_x = x
+
+  m = beta1*m + (1.0-beta1)*dx
+  v = beta2*v + (1.0-beta2)*(dx**2)
+  t = config['t'] + 1
+  m_bias_corrected = m / (1.0 - beta1**t)
+  v_bias_corrected = v / (1.0 - beta2**t)   
+  config['m'] = m
+  config['v'] = v
+  config['t'] = t
+  next_x = x - (learning_rate * m_bias_corrected / (np.sqrt(v_bias_corrected) + epsilon))
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
