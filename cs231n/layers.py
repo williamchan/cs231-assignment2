@@ -601,7 +601,15 @@ def spatial_batchnorm_forward(x, gamma, beta, bn_param):
   # version of batch normalization defined above. Your implementation should  #
   # be very short; ours is less than five lines.                              #
   #############################################################################
-  pass
+  N, C, H, W = np.shape(x)
+
+  # https://www.reddit.com/r/cs231n/comments/443y2g/hints_for_a2 has hint about reshaping.
+  # To use batchnorm_forward which expects dimensions of (N',D'), treat C as D'
+  # and N*H*W as N'. Need to order values correctly with transpose.
+
+  x_flattened = x.transpose(0, 2, 3, 1).reshape(-1, C)                         # dim=(N*H*W, C)
+  out_flattened, cache = batchnorm_forward(x_flattened, gamma, beta, bn_param) # dim=(N*H*W, C)
+  out = out_flattened.reshape(N, H, W, C).transpose(0, 3, 1, 2)                # dim=N,C,H,W
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
@@ -631,7 +639,11 @@ def spatial_batchnorm_backward(dout, cache):
   # version of batch normalization defined above. Your implementation should  #
   # be very short; ours is less than five lines.                              #
   #############################################################################
-  pass
+  N, C, H, W = np.shape(dout)
+
+  dout_flattened = dout.transpose(0, 2, 3, 1).reshape(-1, C)
+  dx_flattened, dgamma, dbeta = batchnorm_backward(dout_flattened, cache)
+  dx = dx_flattened.reshape(N, H, W, C).transpose(0, 3, 1, 2)           
   #############################################################################
   #                             END OF YOUR CODE                              #
   #############################################################################
