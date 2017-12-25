@@ -3,4 +3,5 @@
 .env/*
 .ipynb_checkpoints/
 cs231n/datasets/cifar-10-batches-py
+cs231n/im2col_cython.cpython-36m-darwin.so
 collectSubmission.sh
